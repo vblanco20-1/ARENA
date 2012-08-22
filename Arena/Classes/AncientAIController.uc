@@ -87,17 +87,19 @@ state Chasing
 
 state Charging  //i want the AI to go running to the target and hit him in the face
 {
-
-
      Begin:
         MoveToward(Target);
 
      if(VSize(Target.Location-Pawn.Location)<= CombatDistance+50)
      {
         DoHeavyAttack();
-        GotoState('Combat');
+
      }
 
+     if (VSize(Target.Location-Pawn.Location)<= CombatDistance)
+     {
+     	gotoState('combat');
+	 }
       goto 'Begin';
 }
 state Combat
@@ -105,20 +107,23 @@ state Combat
     function GotorandomPosition()
     {
          MovTarget = Target.Location;
-         MovTarget.x+=RandRange(-20.0,20.0);
-         MovTarget.y+=RandRange(-20.0,20.0);
-
+         MovTarget.x+=RandRange(-50.0,50.0);
+         MovTarget.y+=RandRange(-50.0,50.0);
+         SetTimer(randRange(0.5,2.0),false,'gotorandomposition');
     }
     function BeginState(name PreviousStateName)
     {
         DoHeavyAttack();
         SetTimer(0.3,true,'checkdistance');
-        SetTimer(0.7,true,'DoLightAttack');
-        SetTimer(randRange(0.2,1.0),true,'gotorandomposition');
+        SetTimer(1.5,true,'DoLightAttack');
+        MovTarget=Target.location;
+        AncientPawn(pawn).Slowthepawn();//slows the pawn
+        SetTimer(randRange(0.5,2),false,'gotorandomposition');
     }
     function EndState(name PreviousStateName)
     {
         ClearallTimers();
+        AncientPawn(pawn).RestoreSpeed();
     }
     function checkdistance()
     {
@@ -129,8 +134,12 @@ state Combat
     }
     Begin:
     if(MovTarget!=vect(0,0,0)){
-    	MoveTo(MovTarget);
+    	MoveTo(MovTarget,Target);
+    	`Log("MovTargetis "$MovTarget);
 	}
+	Sleep(0.1); //so we dont have a infinite loop
+
+	goto('Begin');
 
 
 }
@@ -138,7 +147,7 @@ state Combat
 
 DefaultProperties
 {
-    CombatDistance=200;
+    CombatDistance=150;
 
 
 }

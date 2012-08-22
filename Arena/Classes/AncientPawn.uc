@@ -68,7 +68,7 @@ event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector
   //slows the pawn when taking damage
  function SlowThePawn()
  {
- GroundSpeed=50;
+ GroundSpeed=100;
  }
  function defend(bool bdefend)
  {
@@ -76,7 +76,7 @@ event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector
  }
   function RestoreSpeed()
  {
- GroundSpeed=250;
+ GroundSpeed=200;
  }
 
 // state Hurt
