@@ -82,7 +82,7 @@ simulated event Tick(float DeltaTime)
             StopDefend();
         }
     }
-    bIsAttacking=false;
+
 
  }
 
@@ -100,10 +100,12 @@ Simulated Function StopFire(byte FireModeNum)
     if(FireModeNum==0)
     {
 
-        if(!bIsAttacking && bLMousePressed)
+        if(bLMousePressed)
         {
             bAttackCancel=true;
-            FastAttack();
+            if(!bIsAttacking){
+			FastAttack() ;
+			}
         }
         bLMousePressed=false;
     }
@@ -115,12 +117,11 @@ Simulated function Defend()
     if(bIsAttacking==false)
     {
     AncientPawn(Owner).AncientBlend.SetActiveChild( 3, 0.14 );
+    AncientPawn(owner).defend(true);
     bIsDefending=true;
     bIsAttacking=false;
     }
-
-
-    //shield code here
+        //shield code here
 }
 
 
@@ -141,6 +142,7 @@ Simulated function StopDefend()
 //the fast light attack
 function FastAttack()
 {    `log("fastattack");
+
     super.StartFire(0);
     AncientPawn(owner).halfBodyUp.PlayCustomAnim('AttackThurst',1.0,0.1,0.1,false,true);
     AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
@@ -150,7 +152,7 @@ function FastAttack()
 }
 function EndAttack()
 {
-     bIsAttacking=false;
+ 	bIsAttacking=false;
 }
 //the heavy Charged Attack
 function HeavyAttack()
@@ -185,6 +187,7 @@ function ChargeEnd()
         HeavyAttack();
     }
 }
+
 
 //////////////////////////////WeaponGivenFunctionality/////////////////////////////
 //////////// ////////////////////////////////////////////////////////////////
@@ -368,7 +371,7 @@ ShieldArchetype=AncientShield'Ancientcontent.Archetypes.SimpleShieldC'
   bMeleeWeapon=true;
   bInstantHit=true;
   bCanThrow=false;
-
+  bIsAttacking=false;
    FiringStatesArray(0)="Swinging"
    WeaponFireTypes(0)=EWFT_Custom
    InstantHitDamage(0)=50;
