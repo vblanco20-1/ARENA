@@ -128,7 +128,7 @@ state Combat
         }
     }
     Begin:
-    if(MovTarget!=zero){
+    if(MovTarget!=vect(0,0,0)){
     	MoveTo(MovTarget);
 	}
 
@@ -139,6 +139,6 @@ state Combat
 DefaultProperties
 {
     CombatDistance=200;
-    MovTarget=0;
+
 
 }
