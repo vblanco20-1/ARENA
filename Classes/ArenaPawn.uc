@@ -78,6 +78,12 @@ event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector
         Controller.Detach(self);
     }
     WorldInfo.Game.Broadcast(self,Damage);
+
+
+    if(ArenaAIController(Controller) != none)
+    {
+       ArenaAIController(Controller).SetTarget(InstigatedBy.Pawn);
+    }
 }
 
   //slows the pawn when taking damage

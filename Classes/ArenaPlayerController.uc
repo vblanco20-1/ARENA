@@ -18,46 +18,36 @@ State DoInventoryBussines
 
 State GotTarget extends PlayerWalking
 {
-
-  simulated event PlayerTick(float DeltaTime)
-   {
-
-
-
-
-    local ArenaPawn APawn;
-
-    super.PlayerTick(DeltaTime);
-
-
-
-
-
-    APawn = ArenaPawn(self.Pawn);
-
-    //Repair reference do event based Through PostBeginToPlay , repair PostBeginTOplay
-    HUD=ArenaHud(myHUD);
-    HUD.PlayerHealth=Apawn.health;
-    HUD.PlayerVigour=Apawn.vigour;
-    HUD.PlayerAmmo=Apawn.Ammo;
-
-      Locktarget();
-   }
+//
+//  simulated event PlayerTick(float DeltaTime)
+//   {
+// local ArenaPawn APawn;
+//    super.PlayerTick(DeltaTime);
+//    APawn = ArenaPawn(self.Pawn);
+//
+//    //Repair reference do event based Through PostBeginToPlay , repair PostBeginTOplay
+//    HUD=ArenaHud(myHUD);
+//    HUD.PlayerHealth=Apawn.health;
+//    HUD.PlayerVigour=Apawn.vigour;
+//    HUD.PlayerAmmo=Apawn.Ammo;
+//
+//      Locktarget();
+//   }
 }
 
 
 //HUd Variables on CHange
 event PlayerTick( float DeltaTime )
 {
-    local ArenaPawn Apawn;
-
-    APawn = ArenaPawn(self.Pawn);
-
-    HUD=ArenaHud(myHUD);
-    HUD.PlayerHealth=Apawn.health;
-    HUD.PlayerVigour=Apawn.vigour;
-    HUD.PlayerAmmo=Apawn.Ammo;
-
+    //local ArenaPawn Apawn;
+//
+//    APawn = ArenaPawn(self.Pawn);
+//
+//    HUD=ArenaHud(myHUD);
+//    HUD.PlayerHealth=Apawn.health;
+//    HUD.PlayerVigour=Apawn.vigour;
+//    HUD.PlayerAmmo=Apawn.Ammo;
+//
 
     super.PlayerTick(DeltaTime);
 }
@@ -142,20 +132,19 @@ ArenaPlayer.UpdatePawnRotation(AimRotation);
   {
    WorldINfo.Game.Broadcast(self,"Hello");
   }
-
- Simulated event postbeginPlay()
- {
-  local ArenaFreeForAll FreeForAllGameMode;
-
-  super.PostBeginPlay();
-  FreeForAllGameMode=ArenaFreeForAll(WorldInfo.Game);
-  FreeForAllGameMode.Debuger();
-  settimer(1,false,'SpawnersVariableDeclaration');
- }
+//
+// Simulated event postbeginPlay()
+// {
+//  local ArenaFreeForAll FreeForAllGameMode;
+//
+//  super.PostBeginPlay();
+//  FreeForAllGameMode=ArenaFreeForAll(WorldInfo.Game);
+//  FreeForAllGameMode.Debuger();
+//  settimer(1,false,'SpawnersVariableDeclaration');
+// }
 
 
 defaultproperties
 
 {
-
 }

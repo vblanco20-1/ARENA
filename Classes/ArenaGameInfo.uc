@@ -45,7 +45,7 @@ function Int GetRandomNumber()
 simulated event postbeginplay()
 {
   super.Postbeginplay();
-  //works
+  //works  s
 
 }
 

@@ -3,7 +3,7 @@
 //-----------------------------------------------------------
 class ArenaAIController extends AIcontroller;
 
-var Pawn player;
+
 var Pawn Target;
 var() float CombatDistance;
 var Vector MovTarget; //for the "gotothisplace stuff"
@@ -45,6 +45,18 @@ function DoLightAttack()
         Target=none;
     }
 }
+function SetTarget(pawn Objetive)
+{
+	Target=Objetive;
+	if(IsNear())
+     {
+        GotoState('Combat');
+     }
+     else
+     {
+        GotoState('charging');
+     }
+}
 event Possess(Pawn inPawn, bool bVehicleTransition)
 {
   super.Possess(inPawn, bVehicleTransition);
@@ -54,21 +66,29 @@ event Possess(Pawn inPawn, bool bVehicleTransition)
 }
 auto state Idle
 {
+
+   event SeeMonster(Pawn Seen)
+   {
+      WorldInfo.Game.Broadcast(self,"SEEMONSTORE");
+     super.SeeMonster(Seen);
+      SetTarget(Seen);
+   }
    event SeePlayer(Pawn Seen)
    {
-      WorldInfo.Game.Broadcast(self,"ic");
+      //WorldInfo.Game.Broadcast(self,"ic");
      super.SeePlayer(Seen);
-     Target = Seen;
-     if(IsNear())
-     {
-        GotoState('Combat');
-     }
-     else
-     {
-        GotoState('charging');
-     }
-
+     SetTarget(Seen);
    }
+	event HearNoise( float Loudness, Actor NoiseMaker, optional Name NoiseType )
+	{
+
+			SetTarget(Pawn(NoiseMaker));
+            `log(NoiseType);
+	}
+	event BeginState(name PreviousStateName)
+	{
+		MakeNoise(100000,'ComeHere');
+	}
 
 }
 state Chasing
@@ -93,7 +113,6 @@ state Charging  //i want the AI to go running to the target and hit him in the f
      if(VSize(Target.Location-Pawn.Location)<= CombatDistance+50)
      {
         DoHeavyAttack();
-
      }
 
      if (VSize(Target.Location-Pawn.Location)<= CombatDistance)
@@ -104,7 +123,7 @@ state Charging  //i want the AI to go running to the target and hit him in the f
 }
 state Combat
 {
-    function GotorandomPosition()
+    function GoToRandomPosition()
     {
          MovTarget = Target.Location;
          MovTarget.x+=RandRange(-50.0,50.0);
@@ -118,13 +137,17 @@ state Combat
         SetTimer(0.3,true,'checkdistance');
         SetTimer(1.5,true,'DoLightAttack');
         MovTarget=Target.location;
+
         ArenaPawn(pawn).Slowthepawn();//slows the pawn
+
         SetTimer(randRange(0.5,2),false,'gotorandomposition');
     }
     function EndState(name PreviousStateName)
     {
         ClearallTimers();
+
         ArenaPawn(pawn).RestoreSpeed();
+
     }
     function checkdistance()
     {
@@ -133,11 +156,11 @@ state Combat
             GotoState('Chasing');
         }
     }
-	Begin:
+    Begin:
 
-	MoveToDirectNonPathPos(MovTarget,Target,5.0,true);
-	sleep(0.1);
-	goto('begin');
+    MoveToDirectNonPathPos(MovTarget,Target,5.0,false);
+    sleep(0.1);
+    goto('begin');
 
 
 }
@@ -145,7 +168,7 @@ state Combat
 
 DefaultProperties
 {
-    CombatDistance=150a;
+    CombatDistance=150;
 
 
 }
