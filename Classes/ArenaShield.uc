@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientShield extends Actor placeable;
+class ArenaShield extends Actor placeable;
 
 DefaultProperties
 {

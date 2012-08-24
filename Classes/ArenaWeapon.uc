@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientWeapon extends UDKWeapon;
+class ArenaWeapon extends UDKWeapon;
 
 //In Construction
 var bool bShouldstopFire;

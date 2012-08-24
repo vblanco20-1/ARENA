@@ -1,15 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientBow extends AncientWeapon;
-
-
-
-//projjectileArchetype
-var archetype AncientArrow  ArrowArchetype;
-
-
-
+class ArenaBow extends ArenaWeapon;
 
 //overriding Training
 
@@ -29,17 +21,17 @@ var archetype AncientArrow  ArrowArchetype;
 
  Function LoadBow()
  {
- AncientPawn(owner).halfBodyUp.PlayCustomAnim('LoadBow',1.0,0.1,0.1,false,true,,60);
+ ArenaPawn(owner).halfBodyUp.PlayCustomAnim('LoadBow',1.0,0.1,0.1,false,true,,60);
  }
 
  function FireBow()
  {
- AncientPawn(owner).halfBodyUp.PlayCustomAnim('FireBow',1.0,0.1,0.1,false,true,,1);
+ ArenaPawn(owner).halfBodyUp.PlayCustomAnim('FireBow',1.0,0.1,0.1,false,true,,1);
  }
 
  function GoToIdle()
  {
- AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.0 );
+ ArenaPawn(Owner).AncientBlend.SetActiveChild( 0, 0.0 );
  }
 //Equipped?
 simulated function TimeWeaponEquipping()
@@ -55,8 +47,8 @@ simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name
 
 {
 
-  mesh.SetShadowParent(AncientPawn(Owner).mesh);
-  mesh.SetLightEnvironment(AncientPawn(Owner).LightEnvironment);
+  mesh.SetShadowParent(ArenaPawn(Owner).mesh);
+  mesh.SetLightEnvironment(ArenaPawn(Owner).LightEnvironment);
 
  MeshCpnt.AttachComponentToSocket(mesh,SocketName);
 }
@@ -123,9 +115,7 @@ simulated event vector GetPhysicalFireStartLoc(optional vector AimDir)
 
 DefaultProperties
 {
-ArrowArchetype=AncientArrow'AncientContent.Archetypes.ArrowArch'
-
-
+//ArrowArchetype=ArenaArrow'AncientContent.Archetypes.ArrowArch'
 
 
 Begin Object class=DynamicLightEnvironmentComponent Name=MyLightEnvironment
@@ -147,7 +137,7 @@ FiringStatesArray(0)=WeaponFiring
 WeaponFireTypes(0)=EWFT_Projectile
 FireInterval(0)=0.5
 Spread(0)=0
-WeaponProjectiles(0)=class 'Ancient.AncientArrow'
+WeaponProjectiles(0)=class 'Arena.ArenaArrow'
 
 bShouldStopFire=true
 }

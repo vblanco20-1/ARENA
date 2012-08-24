@@ -1,33 +1,48 @@
-class AncientPawn extends Pawn PlaceAble;
+class ArenaPawn extends Pawn PlaceAble;
+
+//PawnLifevariables
+var int vigour;
+var int ActualHealth;
+var int Ammo;
+
+//Shield
+var archetype ArenaShield ShieldArchetype;
+var archetype ArenaOneHandedMeleeWeapon OneHandedWeaponArchetype;
 
 
+//TeamNumber, defines what team he is , so he knows who attack and who to not default is 0
+//1 = blue
+//2 = Red     //Can add more
+//3 = Green
+//4 = purple
+var int TeamNumber;
 
 //PawnLastMouseMovement
 var string LastPawnMovement;
 
-var AncientPlayerController PC;
+
+//PC
+var ArenaPlayerController PC;
 
 //Blood variable
 var EmitterSpawnable Blood;
 
 
 //skill System
-var AncientSkillSystem Skills;
+var ArenaSkillSystem Skills;
 
 //Random Array
 var Array<Int> Numbers;
 var int AttackNumber;
 
-//Camera variables
+ //Camera variables
 var() const DynamicLightEnvironmentComponent LightEnvironment;
 var() const int IsoCamAngle;
 var() const float CamOffsetDistance;
 var float CamPitch;
 
-//reference AncientMeleeWeapon for the the Func add default.
-var() const archetype AncientMeleeWeapon  SwordArchetype;
-var archetype AncientShield ShieldArchetype;
-var archetype AncientBow  BowArchetype;
+
+
 
 //Socket variable
 var() const Name RightHandSocketName;
@@ -112,17 +127,59 @@ exec Function ShieldProtection()
  }
 
 
+//Enter In ragdoll , (IncludeRagdoll whle running also for Gore)
+simulated function bool Died(Controller Killer, class<DamageType> DamageType, vector HitLocation)
+{
+  if (Super.Died(Killer, DamageType, HitLocation))
+  {
+    Mesh.MinDistFactorForKinematicUpdate = 0.f;
+    Mesh.SetRBChannel(RBCC_Pawn);
+    Mesh.SetRBCollidesWithChannel(RBCC_Default, true);
+    Mesh.SetRBCollidesWithChannel(RBCC_Pawn, false);
+    Mesh.SetRBCollidesWithChannel(RBCC_Vehicle, false);
+    Mesh.SetRBCollidesWithChannel(RBCC_Untitled3, false);
+    Mesh.SetRBCollidesWithChannel(RBCC_BlockingVolume, true);
+    mesh.ForceSkelUpdate();
+    Mesh.SetTickGroup(TG_PostAsyncWork);
+    CollisionComponent = Mesh;
+    CylinderComponent.SetActorCollision(false, false);
+    Mesh.SetActorCollision(true, false);
+    Mesh.SetTraceBlocking(true, true);
+    SetPhysics(PHYS_RigidBody);
+    Mesh.PhysicsWeight = 1.0;
+
+    if (Mesh.bNotUpdatingKinematicDueToDistance)
+    {
+      Mesh.UpdateRBBonesFromSpaceBases(true, true);
+    }
+
+    Mesh.PhysicsAssetInstance.SetAllBodiesFixed(false);
+    Mesh.bUpdateKinematicBonesFromAnimation = false;
+    Mesh.SetRBLinearVelocity(Velocity, false);
+    Mesh.ScriptRigidBodyCollisionThreshold = MaxFallSpeed;
+    Mesh.SetNotifyRigidBodyCollision(true);
+    Mesh.WakeRigidBody();
+
+    return true;
+  }
+
+  return false;
+}
+
+
+
+
 //Add The default inventory to the pawn
 function AddDefaultInventory()
 {
 
-  local AncientInventorymanager AInventoryManager;
-   AInventoryManager = AncientInventorymanager(self.InvManager);
+  local ArenaInventorymanager AInventoryManager;
+   AInventoryManager = ArenaInventorymanager(self.InvManager);
 
 
-   AInventoryManager.CreateInventoryArchetype(SwordArchetype, false);
-   // AInventoryManager.CreateInventory(class'Ancient.AncientOneHandedMeleeWeapon');
-   AInventoryManager.CreateInventory(class'Ancient.AncientBow');
+   AInventoryManager.CreateInventoryArchetype(OneHandedWeaponArchetype, false);
+   //AInventoryManager.CreateInventory(class'Ancient.AncientOneHandedMeleeWeapon');
+   //AInventoryManager.CreateInventory(class'Arena.ArenaBow');
 
 }
 
@@ -176,9 +233,9 @@ simulated function bool CalcCamera(float DeltaTime, out vector out_CamLoc, out r
 event PostBeginPlay()
 {
  bIsdefending=false;
-Skills=Spawn(class'Ancient.AncientSkillSystem');
+Skills=Spawn(class'Arena.ArenaSkillSystem');
 
-PC = ancientPlayerController(controller);
+PC = ArenaPlayerController(controller);
 
 
   super.PostBeginPlay();
@@ -192,7 +249,7 @@ function AddShield()
 {
 local Vector SocketLocation;
 local Rotator SocketRotation;
-local Actor AncientShield;
+local Actor ArenaShield;
 
    if (mesh != None)
 {
@@ -200,11 +257,11 @@ local Actor AncientShield;
   {
  mesh.GetSocketWorldLocationAndRotation(LeftHandSocketName, SocketLocation, SocketRotation);
 
-    AncientShield = Spawn(ShieldArchetype.class,,, SocketLocation, SocketRotation, shieldArchetype);
+    ArenaShield = Spawn(ShieldArchetype.class,,, SocketLocation, SocketRotation, shieldArchetype);
 
-    if (AncientShield != None)
+    if (ArenaShield != None)
     {
-      AncientShield.SetBase(self,, mesh, lefthandsocketname);
+      ArenaShield.SetBase(self,, mesh, lefthandsocketname);
     }
   }
 }
@@ -219,11 +276,11 @@ DefaultProperties
 
 
 
-    InventoryManagerClass=class'AncientInventoryManager'
+    InventoryManagerClass=class'ArenaInventoryManager'
 
-    SwordArchetype=AncientMeleeWeapon'AncientContent.Archetypes.AncientBarSword'
-    ShieldArchetype=AncientShield'AncientContent.Archetypes.SimpleShieldC'
-    BowArchetype=Ancientbow'AncientContent.Archetypes.SimpleBow'
+     OneHandedWeaponArchetype=ArenaOneHandedMeleeWeapon'ArenaContent.Archetypes.StickSword'
+    //ShieldArchetype=ArenaShield'AncientContent.Archetypes.SimpleShieldC'
+    //BowArchetype=Arenabow'AncientContent.Archetypes.SimpleBow'
 
 
     Components.Remove(Sprite)
@@ -260,13 +317,12 @@ DefaultProperties
        bAllowAmbientOcclusion=false
        bUseOnePassLightingOnTranslucency=true
        bPerBoneMotionBlur=true
-       SkeletalMesh=SkeletalMesh'AncientContent.SimpleCharacter'
     End Object
     Mesh=MySkeletalMeshComponent
     Components.Add(MySkeletalMeshComponent)
 
    GroundSpeed=250
-   controllerClass=class'Ancient.AncientAIController'
+   controllerClass=class'Arena.ArenaAIController'
    bCanBeBaseForPawns=false
 
     Numbers(0)=1
@@ -274,4 +330,6 @@ DefaultProperties
     Numbers(2)=3
     Numbers(3)=4
 
+   //gameVars
+   Vigour=100
 }

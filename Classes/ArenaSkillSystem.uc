@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientSkillSystem extends Actor;
+class ArenaSkillSystem extends Actor;
 
 //OHweaponvars
 var int OneHandedWeaponSkilXp;

@@ -1,6 +1,6 @@
-class AncientInventoryManager extends InventoryManager;
+class ArenaInventoryManager extends InventoryManager;
 
-var() const archetype AncientMeleeWeapon  SwordArchetype;
+
 
 //Create the Archetype of the Created Inventory
 function Inventory CreateInventoryArchetype(Inventory NewInventoryItemArchetype, optional bool bDoNotActivate)
@@ -28,6 +28,6 @@ function Inventory CreateInventoryArchetype(Inventory NewInventoryItemArchetype,
 
 DefaultProperties
 {
-    SwordArchetype=AncientMeleeWeapon'AncientContent.Archetypes.AncientBarSword'
     PendingFire(0)=0
+    PendingFire(1)=0
 }

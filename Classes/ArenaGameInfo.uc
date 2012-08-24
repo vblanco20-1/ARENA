@@ -1,14 +1,14 @@
-class AncientGameInfo extends SimpleGame;
+class ArenaGameInfo extends SimpleGame;
 
+//The Spawner That spawns enemys
+var ArenaSpawner Spawner;
 
-//Add Sword And Pawn Archetype Variables
-var() const archetype AncientPawn PawnArchetype;
-var() const archetype AncientMeleeWeapon SwordArchetype;
 
 //random number
 var Array<Int> Numbers;
 
-
+//Add Sword And Pawn Archetype Variables
+var() const archetype ArenaPawn PawnArchetype;
 
 //function that spawns pawn at the starting
 function Pawn SpawnDefaultPawnFor(Controller NewPlayer, NavigationPoint StartSpot)
@@ -28,7 +28,6 @@ function Pawn SpawnDefaultPawnFor(Controller NewPlayer, NavigationPoint StartSpo
 
 
 
-
 //Get Random number for what? , for the Melee attack 4 ways .
 function Int GetRandomNumber()
 {
@@ -42,11 +41,11 @@ function Int GetRandomNumber()
 
 
 
-
-
 //Post begin To play Funct
-event postbeginplay()
+simulated event postbeginplay()
 {
+  super.Postbeginplay();
+  //works
 
 }
 
@@ -57,9 +56,10 @@ DefaultProperties
      Numbers(1)=2
      Numbers(2)=3
      Numbers(3)=4
-    SwordArchetype=AncientMeleeWeapon'AncientContent.Archetypes.AncientBarSword'
-    PawnArchetype=AncientPawn'AncientContent.Archetypes.AncientsimplePawn'
-    PlayerControllerClass=class'Ancient.AncientPlayerController'
-    //HUDType=class'Ancient.AncientHud'
+
+
+    PawnArchetype=ArenaPawn'ArenaContent.Archetypes.TheSimpleArenaPawn'
+    PlayerControllerClass=class'Arena.ArenaPlayerController'
+
 
 }

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientMerchant extends trigger;
+class GFxArenaMainMenu extends GFxMoviePlayer;
 
 DefaultProperties
 {

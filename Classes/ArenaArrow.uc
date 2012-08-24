@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientArrow extends UDKProjectile Placeable;
+class ArenaArrow extends UDKProjectile Placeable;
 
 
 
@@ -19,7 +19,7 @@ DefaultProperties
  begin object class=StaticMeshComponent Name=BaseMesh
  LightEnvironment=MyLightEnvironment
 
- StaticMesh=StaticMesh'AncientContent.Arrow'
+ StaticMesh=StaticMesh'ArenaContent.ArenaArrow'
  end object
 
 

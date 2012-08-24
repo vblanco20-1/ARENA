@@ -1,4 +1,4 @@
-class AncientMeleeWeapon Extends Weapon Placeable;
+class ArenaMeleeWeapon Extends Weapon ;
 
 //lastMovement s
 var string LastMovement;
@@ -22,14 +22,39 @@ var() const name SwordHiltSocketName;
 var() const name SwordTipSocketName;
 
 //shield variable
-var archetype AncientShield ShieldArchetype;
 var bool bIsDefending;
 
 //The Hit Actors Global Variable +
 var Actor AttackedActor;
 
-//train anim var
-var() const name SwordAnimationName;
+//Array of Animations Fast Attack animations
+var() const Name FastAttackAnimation[10];  //FastAtttack
+//0  From right
+//1  From Left
+//2  From UP
+//3  Thurst
+//5-10 Miscellenous
+//for Combos
+
+//Array of Animation Load Attack Animation
+var() const Name LoadAttackAnimation[10]; //After Loadattack
+//0  From right
+//1  From Left
+//2  From UP
+//3  Thurst
+//5-10 Miscellenous
+//for Combos
+
+//Array of Animation Prepare Load Attack Animation    //prepares attack
+var() const Name PrepareAttackAnimation[10];
+//0  From right
+//1  From Left
+//2  From UP
+//3  Thurst
+
+//5-10 Miscellenous
+//for Combos  The number rule
+
 
 
 //Important Assets for variables
@@ -116,8 +141,8 @@ Simulated function Defend()
 {
     if(bIsAttacking==false)
     {
-    AncientPawn(Owner).AncientBlend.SetActiveChild( 3, 0.14 );
-    AncientPawn(owner).defend(true);
+    ArenaPawn(Owner).AncientBlend.SetActiveChild( 3, 0.14 );   //defend anim = up careful.
+    ArenaPawn(Owner).defend(true);
     bIsDefending=true;
     bIsAttacking=false;
     }
@@ -130,8 +155,8 @@ Simulated function StopDefend()
 {
 //shield code here
      bIsDefending=false;
-     AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
-     AncientPawn(owner).defend(false);
+     ArenaPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
+     ArenaPawn(owner).defend(false);
 }
 
 
@@ -144,8 +169,8 @@ function FastAttack()
 {    `log("fastattack");
 
     super.StartFire(0);
-    AncientPawn(owner).halfBodyUp.PlayCustomAnim('AttackThurst',1.0,0.1,0.1,false,true);
-    AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
+    ArenaPawn(owner).halfBodyUp.PlayCustomAnim(FastAttackAnimation[0],1.0,0.1,0.1,false,true);
+    ArenaPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
     SetTimer(GetFireInterval(0), false, nameof(ResetSwings));
     SetTimer(GetFireInterval(0), false,nameof(EndAttack));
     bIsAttacking=true;
@@ -158,8 +183,8 @@ function EndAttack()
 function HeavyAttack()
 {   `log("HVATT");
     super.StartFire(1);
-    AncientPawn(owner).halfBodyUp.PlayCustomAnim('AttackUp',1.0,0.1,0.1,false,true);
-    AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
+    ArenaPawn(owner).halfBodyUp.PlayCustomAnim(LoadAttackAnimation[2],1.0,0.1,0.1,false,true);
+    ArenaPawn(Owner).AncientBlend.SetActiveChild( 0, 0.15 );
     SetTimer(GetFireInterval(1), false, nameof(ResetSwings));
     SetTimer(GetFireInterval(1), false, nameof(EndAttack));
     bIsAttacking=true;
@@ -170,10 +195,12 @@ function HeavyAttack()
 //timer stuff for the charged attack
 
 function StartCharge()
-{   `log("chargin");
+{
+
+    `log("chargin");
     SetTimer(ChargeTime,false,'ChargeEnd');
     bAttackCancel=false;
-    AncientPawn(Owner).AncientBlend.SetActiveChild( 1, 0.15 );
+    ArenaPawn(owner).halfBodyUp.PlayCustomAnim(PrepareAttackAnimation[2],1.0,0.1,0.1,false,true,,60);
 
 }
 
@@ -204,8 +231,8 @@ simulated function TimeWeaponEquipping()
 //Attaches the Weapon to the Pawn
 simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name SocketName )
 {
-    mesh.SetShadowParent(AncientPawn(Owner).mesh);
-    mesh.SetLightEnvironment(AncientPawn(Owner).LightEnvironment);
+    mesh.SetShadowParent(ArenaPawn(Owner).mesh);
+    mesh.SetLightEnvironment(ArenaPawn(Owner).LightEnvironment);
     MeshCpnt.AttachComponentToSocket(mesh,SocketName);
 }
 
@@ -277,7 +304,8 @@ function TraceSwing()
    foreach TraceActors(class'Actor', HitActor, HitLoc, HitNorm, SwordTip, SwordHilt)
    {
 
-      AttackedActor=HitActor;
+
+
       if (HitActor != self && AddToSwingHitActors(HitActor))
       {
          Momentum = Normal(SwordTip - SwordHilt) * InstantHitMomentum[CurrentFireMode];
@@ -302,7 +330,7 @@ function RestoreAmmo(int Amount, optional byte FireModeNum)
 //Function Go to idle Again
 function GoToIdleAgain()
 {
- AncientPawn(Owner).AncientBlend.SetActiveChild( 0, 0.0 );
+ ArenaPawn(Owner).AncientBlend.SetActiveChild( 0, 0.0 );
 
 }
 //Consumes Ammo , so swings gets reduced
@@ -362,7 +390,7 @@ function ResetSwings()
 DefaultProperties
 {
 
-ShieldArchetype=AncientShield'Ancientcontent.Archetypes.SimpleShieldC'
+//ShieldArchetype=AncientShield'Ancientcontent.Archetypes.SimpleShieldC'
 
  MaxSwings=2
  Swings(0)=2

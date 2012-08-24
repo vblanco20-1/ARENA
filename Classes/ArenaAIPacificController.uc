@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientAIPacificController extends AIcontroller;
+class ArenaAIPacificController extends AIcontroller;
 
 var Pawn player;
 

@@ -1,9 +1,16 @@
 //-----------------------------------------------------------
 //
 //-----------------------------------------------------------
-class AncientPawnAllie extends AncientPawn;
+class ArenaOneHandedMeleeWeapon extends ArenaMeleeWeapon;
+
+
+
+
+
 
 DefaultProperties
 {
+
+
 
 }
