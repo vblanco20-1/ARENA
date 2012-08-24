@@ -5,50 +5,46 @@ Var float Time;
 Var string LastMouseInput;
 var ArenaPawn ThePlayer;
 Var bool bHasTarget;
-
+var bool bUpdateHud;
 //reference to the HUD for Cntrolling Purposes
 var ArenaHud HUD;
+
+function UpdateHud(float DeltaTime)
+{
+	if(bUpdateHud)
+	{
+		//Repair reference do event based Through PostBeginToPlay , repair PostBeginTOplay
+		HUD=ArenaHud(myHUD);
+		HUD.PlayerHealth=ArenaPawn(self.Pawn).health;
+		HUD.PlayerVigour=ArenaPawn(self.Pawn).vigour;
+		HUD.PlayerAmmo=ArenaPawn(self.Pawn).Ammo;
+
+	}
+
+}
 
 //when you press i you enter in your inventory and you get mouse
 State DoInventoryBussines
 {
-
-
+//NOTHING IN THIS MOMENT
 }
-
 State GotTarget extends PlayerWalking
 {
-//
-//  simulated event PlayerTick(float DeltaTime)
-//   {
-// local ArenaPawn APawn;
-//    super.PlayerTick(DeltaTime);
-//    APawn = ArenaPawn(self.Pawn);
-//
-//    //Repair reference do event based Through PostBeginToPlay , repair PostBeginTOplay
-//    HUD=ArenaHud(myHUD);
-//    HUD.PlayerHealth=Apawn.health;
-//    HUD.PlayerVigour=Apawn.vigour;
-//    HUD.PlayerAmmo=Apawn.Ammo;
-//
-//      Locktarget();
-//   }
+
+	simulated event PlayerTick(float DeltaTime)
+	{
+		super.PlayerTick(DeltaTime);
+		UpdateHud(DeltaTime);
+		Locktarget();
+	}
 }
 
 
 //HUd Variables on CHange
 event PlayerTick( float DeltaTime )
 {
-    //local ArenaPawn Apawn;
-//
-//    APawn = ArenaPawn(self.Pawn);
-//
-//    HUD=ArenaHud(myHUD);
-//    HUD.PlayerHealth=Apawn.health;
-//    HUD.PlayerVigour=Apawn.vigour;
-//    HUD.PlayerAmmo=Apawn.Ammo;
-//
 
+    UpdateHud(DeltaTime);
     super.PlayerTick(DeltaTime);
 }
 
@@ -57,7 +53,6 @@ event PlayerTick( float DeltaTime )
 exec function CaptureTime()
 {
 SetTimer(0.1,true,'AddNumberPerTime');
-
 WorldInfo.game.broadcast(self,"YouPressedO");
 }
 
@@ -128,23 +123,32 @@ ArenaPlayer.UpdatePawnRotation(AimRotation);
     }
 }
 
-  function SpawnersVariableDeclaration()
-  {
-   WorldINfo.Game.Broadcast(self,"Hello");
-  }
-//
-// Simulated event postbeginPlay()
-// {
-//  local ArenaFreeForAll FreeForAllGameMode;
-//
-//  super.PostBeginPlay();
-//  FreeForAllGameMode=ArenaFreeForAll(WorldInfo.Game);
-//  FreeForAllGameMode.Debuger();
-//  settimer(1,false,'SpawnersVariableDeclaration');
-// }
-
-
-defaultproperties
-
+function SpawnersVariableDeclaration()
 {
+	WorldINfo.Game.Broadcast(self,"Hello");
+}
+
+Simulated event postbeginPlay()
+{
+
+	super.PostBeginPlay();
+	if(ArenaFreeForAll(WorldInfo.Game)!= none)
+	{
+		ArenaFreeForAll(WorldInfo.Game).Debuger();
+	}
+	Settimer(1,false,'checkHud');
+	settimer(1,false,'SpawnersVariableDeclaration');
+}
+
+function checkHud()
+{
+	if(myHUD.class == class'ArenaHud')
+	{
+		bUpdateHud=true;
+		`log("has ArenaHud");
+	}
+}
+defaultproperties
+{
+	bUpdateHud=false;
 }

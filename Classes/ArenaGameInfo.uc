@@ -60,6 +60,7 @@ DefaultProperties
 
     PawnArchetype=ArenaPawn'ArenaContent.Archetypes.TheSimpleArenaPawn'
     PlayerControllerClass=class'Arena.ArenaPlayerController'
+    HUDType=class'Arena.ArenaHud'
 
 
 }
