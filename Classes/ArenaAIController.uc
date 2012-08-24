@@ -8,6 +8,7 @@ var Pawn Target;
 var() float CombatDistance;
 var Vector MovTarget; //for the "gotothisplace stuff"
 
+
 function DoHeavyAttack()
 {
     Pawn.StartFire(1);
@@ -67,22 +68,20 @@ event Possess(Pawn inPawn, bool bVehicleTransition)
 auto state Idle
 {
 
-   event SeeMonster(Pawn Seen)
-   {
-      WorldInfo.Game.Broadcast(self,"SEEMONSTORE");
-     super.SeeMonster(Seen);
-      SetTarget(Seen);
-   }
+
    event SeePlayer(Pawn Seen)
    {
-      //WorldInfo.Game.Broadcast(self,"ic");
-     super.SeePlayer(Seen);
-     SetTarget(Seen);
+		WorldInfo.Game.Broadcast(self,"seeya");
+		super.SeePlayer(Seen);
+		if(!ArenaPawn(pawn).IsSameTeam(Seen))
+		{
+			SetTarget(Seen);
+		}
    }
 	event HearNoise( float Loudness, Actor NoiseMaker, optional Name NoiseType )
 	{
 
-			SetTarget(Pawn(NoiseMaker));
+			//SetTarget(Pawn(NoiseMaker));
             `log(NoiseType);
 	}
 	event BeginState(name PreviousStateName)
@@ -93,7 +92,7 @@ auto state Idle
 }
 state Chasing
 {
-
+	ignores Seeplayer;
    Begin:
       MoveToward(Target);
 
@@ -107,6 +106,7 @@ state Chasing
 
 state Charging  //i want the AI to go running to the target and hit him in the face
 {
+ignores Seeplayer;
      Begin:
         MoveToward(Target);
 
@@ -123,6 +123,7 @@ state Charging  //i want the AI to go running to the target and hit him in the f
 }
 state Combat
 {
+ignores Seeplayer;
     function GoToRandomPosition()
     {
          MovTarget = Target.Location;
@@ -169,6 +170,6 @@ state Combat
 DefaultProperties
 {
     CombatDistance=150;
-
+	bIsPlayer=true;
 
 }

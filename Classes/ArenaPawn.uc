@@ -15,7 +15,7 @@ var archetype ArenaOneHandedMeleeWeapon OneHandedWeaponArchetype;
 //2 = Red     //Can add more
 //3 = Green
 //4 = purple
-var int TeamNumber;
+var() int TeamNumber;
 
 //PawnLastMouseMovement
 var string LastPawnMovement;
@@ -58,6 +58,16 @@ var AnimNodeSlot FullBody;
 
 var bool bIsdefending;
 
+simulated function bool IsSameTeam(Pawn Other)
+{
+	 if(TeamNumber==ArenaPawn(Other).TeamNumber)
+	 {
+	 	return True;
+	 }
+}
+
+
+
 //So can call other actions
 event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
@@ -79,10 +89,13 @@ event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector
     }
     WorldInfo.Game.Broadcast(self,Damage);
 
-
-    if(ArenaAIController(Controller) != none)
+	if(ArenaAIController(Controller) != none)
     {
-       ArenaAIController(Controller).SetTarget(InstigatedBy.Pawn);
+    	if(!IsSameTeam(InstigatedBy.Pawn))
+    	{
+        	ArenaAIController(Controller).SetTarget(InstigatedBy.Pawn);
+       	}
+
     }
 }
 

@@ -9,6 +9,7 @@ var bool bUpdateHud;
 //reference to the HUD for Cntrolling Purposes
 var ArenaHud HUD;
 
+
 function UpdateHud(float DeltaTime)
 {
 	if(bUpdateHud)
