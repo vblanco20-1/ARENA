@@ -7,7 +7,7 @@ class ArenaAIController extends AIcontroller;
 var Pawn Target;
 var() float CombatDistance;
 var Vector MovTarget; //for the "gotothisplace stuff"
-
+var() Vector TempDest;
 
 function DoHeavyAttack()
 {
@@ -49,14 +49,15 @@ function DoLightAttack()
 function SetTarget(pawn Objetive)
 {
 	Target=Objetive;
-	if(IsNear())
-     {
-        GotoState('Combat');
-     }
-     else
-     {
-        GotoState('charging');
-     }
+	goToState('Follow');
+	//if(IsNear())
+//     {
+//        GotoState('Combat');
+//     }
+//     else
+//     {
+//        GotoState('Follow');
+//     }
 }
 event Possess(Pawn inPawn, bool bVehicleTransition)
 {
@@ -68,8 +69,7 @@ event Possess(Pawn inPawn, bool bVehicleTransition)
 auto state Idle
 {
 
-
-   event SeePlayer(Pawn Seen)
+	event SeePlayer(Pawn Seen)
    {
 		WorldInfo.Game.Broadcast(self,"seeya");
 		super.SeePlayer(Seen);
@@ -77,6 +77,7 @@ auto state Idle
 		{
 			SetTarget(Seen);
 		}
+
    }
 	event HearNoise( float Loudness, Actor NoiseMaker, optional Name NoiseType )
 	{
@@ -90,20 +91,73 @@ auto state Idle
 	}
 
 }
-state Chasing
+//state Chasing
+//{
+//	ignores Seeplayer;
+//   Begin:
+//      MoveToward(Target);
+//
+//      if(IsNear())
+//     {
+//        GotoState('Combat');
+//     }
+//
+//      goto 'Begin';
+//}
+
+state Follow
 {
-	ignores Seeplayer;
-   Begin:
-      MoveToward(Target);
+    ignores SeePlayer;
+    function bool FindNavMeshPath()
+    {
+        // Clear cache and constraints (ignore recycling for the moment)
+        NavigationHandle.PathConstraintList = none;
+        NavigationHandle.PathGoalList = none;
 
-      if(IsNear())
-     {
-        GotoState('Combat');
-     }
+        // Create constraints
+        class'NavMeshPath_Toward'.static.TowardGoal( NavigationHandle,target );
+        class'NavMeshGoal_At'.static.AtActor( NavigationHandle, target,32 );
 
-      goto 'Begin';
+        // Find path
+        return NavigationHandle.FindPath();
+    }
+Begin:
+	 `log("followin");
+    if( NavigationHandle.ActorReachable( target) )
+    {
+        FlushPersistentDebugLines();
+
+        //Direct move
+        MoveToward( target,target );
+    }
+    else if( FindNavMeshPath() )
+    {
+        NavigationHandle.SetFinalDestination(target.Location);
+        FlushPersistentDebugLines();
+        NavigationHandle.DrawPathCache(,true);
+
+        // move to the first node on the path
+        if( NavigationHandle.GetNextMoveLocation( TempDest, Pawn.GetCollisionRadius()) )
+        {
+            DrawDebugLine(Pawn.Location,TempDest,255,0,0,true);
+            DrawDebugSphere(TempDest,16,20,255,0,0,true);
+
+            MoveTo( TempDest, target );
+        }
+    }
+    else
+    {
+        //We can't follow, so get the hell out of this state, otherwise we'll enter an infinite loop.
+        GotoState('Idle');
+    }
+
+ 	if(IsNear())
+    {
+       GotoState('Combat');
+    }
+
+    goto 'Begin';
 }
-
 state Charging  //i want the AI to go running to the target and hit him in the face
 {
 ignores Seeplayer;
@@ -154,7 +208,7 @@ ignores Seeplayer;
     {
         if(!IsNear())
         {
-            GotoState('Chasing');
+            GotoState('Follow');
         }
     }
     Begin:

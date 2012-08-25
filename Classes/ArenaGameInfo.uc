@@ -58,7 +58,7 @@ DefaultProperties
      Numbers(3)=4
 
 
-    PawnArchetype=ArenaPawn'ArenaContent.Archetypes.TheSimpleArenaPawn'
+    PawnArchetype=ArenaPawn'ArenaContent.Archetypes.TheSimpleArenaPlayer'
     PlayerControllerClass=class'Arena.ArenaPlayerController'
     HUDType=class'Arena.ArenaHud'
 
